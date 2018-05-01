@@ -21,24 +21,26 @@ func getRandTetromino(src rand.Source) *Tetromino {
 
 	var t *Tetromino
 
-	if i == 0 {
+	switch {
+	case i == 0:
 		t = NewL()
-	} else if i == 1 {
+	case i == 1:
 		t = NewJ()
-	} else if i == 2 {
+	case i == 2:
 		t = NewT()
-	} else if i == 3 {
+	case i == 3:
 		t = NewS()
-	} else if i == 4 {
+	case i == 4:
 		t = NewZ()
-	} else if i == 5 {
+	case i == 5:
 		t = NewI()
-	} else if i == 6 {
+	case i == 6:
 		t = NewSq()
 	}
 
-	t.X = 20
-	t.Y = 7
+	t.X = 3
+	t.Y = 10
+	t.Stopped = true
 
 	return t
 }
@@ -61,15 +63,22 @@ func main() {
 		}
 	}()
 
-	var t *Tetromino
+	var activeTetromino *Tetromino
+	var nextTetromino *Tetromino
 	var seed int64
 	seed = time.Now().Unix()
 
 	src := rand.NewSource(seed)
 
-	t = getRandTetromino(src)
+	activeTetromino = getRandTetromino(src)
+	activeTetromino.Stopped = false
+	activeTetromino.X = 20
+	activeTetromino.Y = 7
 
-	allSprites.Sprites = append(allSprites.Sprites, t)
+	nextTetromino = getRandTetromino(src)
+
+	allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
+	allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
 
 	bg := NewWell()
 
@@ -83,13 +92,13 @@ mainloop:
 				if ev.Key == tm.KeyEsc {
 					break mainloop
 				} else if ev.Key == tm.KeySpace {
-					t.RotateClockwise()
+					activeTetromino.RotateClockwise()
 				} else if ev.Key == tm.KeyArrowLeft {
-					t.MoveLeft()
+					activeTetromino.MoveLeft()
 				} else if ev.Key == tm.KeyArrowRight {
-					t.MoveRight()
+					activeTetromino.MoveRight()
 				} else if ev.Key == tm.KeyArrowDown {
-					t.Timer = 20
+					activeTetromino.Timer = 20
 				}
 			} else if ev.Type == tm.EventResize {
 				Width = ev.Width
@@ -98,10 +107,14 @@ mainloop:
 		default:
 			bg.Render()
 			allSprites.Update()
-			if t.Stopped == true {
+			if activeTetromino.Stopped == true {
 				CheckRows()
-				t = getRandTetromino(src)
-				allSprites.Sprites = append(allSprites.Sprites, t)
+				activeTetromino = nextTetromino
+				activeTetromino.Stopped = false
+				activeTetromino.X = 20
+				activeTetromino.Y = 7
+				nextTetromino = getRandTetromino(src)
+				allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
 			}
 			allSprites.Render()
 			time.Sleep(50 * time.Millisecond)

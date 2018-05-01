@@ -181,8 +181,7 @@ func findLeftEdge(s *Tetromino) {
 	c := s.Costumes[s.CurrentCostume]
 	m := make(map[int]int)
 
-	tm.SetCursor(0, 0)
-
+	// create a map of the blocks inside the sprite
 	furthestLeft := c.Blocks[0].X
 	for _, b := range c.Blocks {
 		if _, ok := m[b.Y]; ok == false {
@@ -192,41 +191,48 @@ func findLeftEdge(s *Tetromino) {
 		furthestLeft = min(furthestLeft, b.X)
 	}
 
+	// if we're against the edge, return
 	if s.X+furthestLeft-s.Xoffset <= 0 {
 		return
 	}
 
-	blocks := make(map[int]int)
-	cBlocks := make(map[int]int)
 	for y, x := range m {
 		for _, b := range allBlocks {
 			if y+s.Y == b.Y {
 				if b.X+b.Width == s.X+x {
-					fmt.Printf("nope")
 					return
 				}
-				blocks[b.Y] = b.X + b.Width
 			}
 		}
-		cBlocks[y+s.Y] = x + s.X
 	}
-	//fmt.Printf("blocks: %q  cBlocks: %q  --", blocks, cBlocks)
 	s.X = s.X - 2
 }
 
-func findRightEdge(s *Tetromino) int {
+func findRightEdge(s *Tetromino) {
 	c := s.Costumes[s.CurrentCostume]
-	x := 0
+	m := make(map[int]int)
+
+	furthestRight := c.Blocks[0].X
 	for _, b := range c.Blocks {
-		if b.X > x {
-			x = b.X
-		}
-		// 4 blocks max * block size
-		if x == 4*2 {
-			break
+		m[b.Y] = max(m[b.Y], b.X)
+		furthestRight = max(furthestRight, b.X)
+	}
+
+	// if we're against the edge, return
+	if s.X+furthestRight-s.Xoffset+1 >= 20 {
+		return
+	}
+
+	for y, x := range m {
+		for _, b := range allBlocks {
+			if y+s.Y == b.Y {
+				if b.X == s.X+x+1 {
+					return
+				}
+			}
 		}
 	}
-	return x
+	s.X = s.X + 2
 }
 
 func findBottomEdge(s *Tetromino) {
@@ -369,10 +375,7 @@ func removeBlock(x, y int) {
 }
 
 func (s *Tetromino) MoveRight() {
-	s.X = s.X + 2
-	if s.X+findRightEdge(s) > 10*2+s.Yoffset+2 {
-		s.X = s.X - 2
-	}
+	findRightEdge(s)
 }
 
 func NewL() *Tetromino {

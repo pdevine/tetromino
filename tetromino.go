@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"sort"
 
 	tm "github.com/nsf/termbox-go"
@@ -82,6 +83,20 @@ const sq0 = `
 xx[][]
 xx[][]`
 
+// Frames Per "Gridcell"
+var levelFPG = map[int]int{
+	0: 48,
+	1: 43,
+	2: 38,
+	3: 33,
+	4: 28,
+	5: 23,
+	6: 18,
+	7: 13,
+	8: 8,
+	9: 6,
+}
+
 func min(a, b int) int {
 	if a <= b {
 		return a
@@ -137,10 +152,44 @@ func NewTetromino() *Tetromino {
 		Xoffset: 10 + 2,
 		Yoffset: 10,
 		Timer:   0,
-		TimeOut: 20,
+		TimeOut: levelFPG[0],
 		Stopped: false,
 	}
 	return t
+}
+
+func getRandTetromino(src rand.Source, bg sprite.BaseBackground) *Tetromino {
+	r := rand.New(src)
+	i := r.Intn(7)
+
+	var t *Tetromino
+
+	switch {
+	case i == 0:
+		t = NewL()
+	case i == 1:
+		t = NewJ()
+	case i == 2:
+		t = NewT()
+	case i == 3:
+		t = NewS()
+	case i == 4:
+		t = NewZ()
+	case i == 5:
+		t = NewI()
+	case i == 6:
+		t = NewSq()
+	}
+
+	t.X = 3
+	t.Y = 10
+	t.Stopped = true
+
+	return t
+}
+
+func (s *Tetromino) SetGravity(level int) {
+	s.TimeOut = levelFPG[level]
 }
 
 func (s *Tetromino) Update() {
@@ -267,7 +316,7 @@ func findBottomEdge(s *Tetromino) {
 }
 
 func (s *Tetromino) convertToBlocks() {
-	// XXX - this is ugly, but saves us having two data represenations
+	// XXX - this is ugly, but saves us having two data representations
 	//       we should probably just omit any odd X values
 	var cnt int
 	for _, b := range s.Costumes[s.CurrentCostume].Blocks {
@@ -278,8 +327,7 @@ func (s *Tetromino) convertToBlocks() {
 			allSprites.Sprites = append(allSprites.Sprites, nb)
 		}
 	}
-	fmt.Printf("adding %d blocks ", cnt)
-	/* remove the piece */
+	// remove the piece
 	for cnt, cs := range allSprites.Sprites {
 		if s == cs {
 			allSprites.Sprites = append(allSprites.Sprites[:cnt], allSprites.Sprites[cnt+1:]...)
@@ -313,9 +361,9 @@ func CheckRows() {
 	// remove blocks from the top first
 	sort.Sort(sort.IntSlice(rowKeys))
 
-	//for y, xrow := range rows {
 	for _, y := range rowKeys {
 		if len(rows[y]) == 10 {
+			TotalLines++
 			// remove blocks
 			for _, x := range rows[y] {
 				removeBlock(x, y)
@@ -329,13 +377,6 @@ func CheckRows() {
 			}
 		}
 	}
-
-	// debug
-	morerows := make(map[int][]int)
-	for _, b := range allBlocks {
-		morerows[b.Y] = append(morerows[b.Y], b.X)
-	}
-	printRows(morerows)
 }
 
 func printRows(rows map[int][]int) {

@@ -13,39 +13,11 @@ var allSprites sprite.SpriteGroup
 var allBlocks []*TetrominoBlock
 var Width int
 var Height int
-var NextTetromino *Tetromino
-
-func getRandTetromino(src rand.Source) *Tetromino {
-	r := rand.New(src)
-	i := r.Intn(7)
-
-	var t *Tetromino
-
-	switch {
-	case i == 0:
-		t = NewL()
-	case i == 1:
-		t = NewJ()
-	case i == 2:
-		t = NewT()
-	case i == 3:
-		t = NewS()
-	case i == 4:
-		t = NewZ()
-	case i == 5:
-		t = NewI()
-	case i == 6:
-		t = NewSq()
-	}
-
-	t.X = 3
-	t.Y = 10
-	t.Stopped = true
-
-	return t
-}
+var CurrentLevel int
+var TotalLines int
 
 func main() {
+	// XXX - hack to make this work inside of a Docker container
 	time.Sleep(500 * time.Millisecond)
 
 	err := tm.Init()
@@ -69,21 +41,22 @@ func main() {
 	seed = time.Now().Unix()
 
 	src := rand.NewSource(seed)
+	bg := NewWell()
 
-	activeTetromino = getRandTetromino(src)
+	activeTetromino = getRandTetromino(src, bg)
 	activeTetromino.Stopped = false
 	activeTetromino.X = 20
 	activeTetromino.Y = 7
+	activeTetromino.SetGravity(CurrentLevel)
 
-	nextTetromino = getRandTetromino(src)
+	nextTetromino = getRandTetromino(src, bg)
 
 	allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
 	allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
 
-	bg := NewWell()
-
 mainloop:
 	for {
+		start := time.Now()
 		tm.Clear(tm.ColorDefault, tm.ColorDefault)
 
 		select {
@@ -98,7 +71,7 @@ mainloop:
 				} else if ev.Key == tm.KeyArrowRight {
 					activeTetromino.MoveRight()
 				} else if ev.Key == tm.KeyArrowDown {
-					activeTetromino.Timer = 20
+					activeTetromino.Timer += levelFPG[CurrentLevel] / 2
 				}
 			} else if ev.Type == tm.EventResize {
 				Width = ev.Width
@@ -113,11 +86,13 @@ mainloop:
 				activeTetromino.Stopped = false
 				activeTetromino.X = 20
 				activeTetromino.Y = 7
-				nextTetromino = getRandTetromino(src)
+				activeTetromino.SetGravity(CurrentLevel)
+				nextTetromino = getRandTetromino(src, bg)
 				allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
 			}
 			allSprites.Render()
-			time.Sleep(50 * time.Millisecond)
+			elapsed := time.Since(start)
+			time.Sleep(time.Second/60 - elapsed)
 		}
 	}
 }

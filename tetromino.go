@@ -149,7 +149,7 @@ func NewTetromino() *Tetromino {
 		Alpha:   'x',
 		Visible: true,
 	},
-		Xoffset: 10 + 2,
+		Xoffset: 20 + 2,
 		Yoffset: 10,
 		Timer:   0,
 		TimeOut: levelFPG[0],
@@ -188,8 +188,11 @@ func getRandTetromino(src rand.Source, bg sprite.BaseBackground) *Tetromino {
 	return t
 }
 
-func (s *Tetromino) SetGravity(level int) {
-	s.TimeOut = levelFPG[level]
+func (s *Tetromino) PlaceInWell() {
+	s.Y = background.Y - s.Costumes[s.CurrentCostume].TopEdge()
+	s.X = background.X + 10
+	s.Stopped = false
+	s.TimeOut = levelFPG[CurrentLevel]
 }
 
 func (s *Tetromino) Update() {
@@ -228,17 +231,9 @@ func (s *Tetromino) RotateAnticlockwise() {
 
 func findLeftEdge(s *Tetromino) {
 	c := s.Costumes[s.CurrentCostume]
-	m := make(map[int]int)
 
-	// create a map of the blocks inside the sprite
-	furthestLeft := c.Blocks[0].X
-	for _, b := range c.Blocks {
-		if _, ok := m[b.Y]; ok == false {
-			m[b.Y] = b.X
-		}
-		m[b.Y] = min(m[b.Y], b.X)
-		furthestLeft = min(furthestLeft, b.X)
-	}
+	furthestLeft := c.LeftEdge()
+	m := c.LeftEdgeByRow()
 
 	// if we're against the edge, return
 	if s.X+furthestLeft-s.Xoffset <= 0 {
@@ -259,13 +254,9 @@ func findLeftEdge(s *Tetromino) {
 
 func findRightEdge(s *Tetromino) {
 	c := s.Costumes[s.CurrentCostume]
-	m := make(map[int]int)
 
-	furthestRight := c.Blocks[0].X
-	for _, b := range c.Blocks {
-		m[b.Y] = max(m[b.Y], b.X)
-		furthestRight = max(furthestRight, b.X)
-	}
+	furthestRight := c.RightEdge()
+	m := c.RightEdgeByRow()
 
 	// if we're against the edge, return
 	if s.X+furthestRight-s.Xoffset+1 >= 20 {
@@ -286,13 +277,8 @@ func findRightEdge(s *Tetromino) {
 
 func findBottomEdge(s *Tetromino) {
 	c := s.Costumes[s.CurrentCostume]
-	m := make(map[int]int)
+	m := c.BottomEdgeByColumn()
 
-	// iterate through each of the blocks and find the
-	// lowest one (co-ordinates are flipped)
-	for _, b := range c.Blocks {
-		m[b.X] = max(m[b.X], b.Y)
-	}
 	for k, v := range m {
 		if s.Stopped {
 			break

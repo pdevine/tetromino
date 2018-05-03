@@ -1,12 +1,37 @@
 package main
 
 import (
+	"fmt"
+
 	sprite "github.com/pdevine/go-asciisprite"
 )
 
+type LinesText struct {
+	sprite.BaseSprite
+}
+
+func NewLinesText(linesNum int) *LinesText {
+	l := fmt.Sprintf("LINES-%03d", linesNum)
+	c := sprite.NewCostume(l, '!')
+
+	s := &LinesText{BaseSprite: sprite.BaseSprite{
+		Costumes: []sprite.Costume{c},
+		Width:    c.Width,
+		Height:   c.Height,
+		Visible:  true,
+	},
+	}
+	return s
+}
+
+func (s *LinesText) UpdateLines(linesNum int) {
+	l := fmt.Sprintf("LINES-%03d", linesNum)
+	s.Costumes[s.CurrentCostume].ChangeCostume(l, '!')
+}
+
 func NewWell() sprite.BaseBackground {
 	bg := sprite.BaseBackground{
-		X:     10,
+		X:     20,
 		Y:     10,
 		Tiled: false,
 	}

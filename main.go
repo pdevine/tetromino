@@ -11,6 +11,7 @@ import (
 
 var allSprites sprite.SpriteGroup
 var allBlocks []*TetrominoBlock
+var background sprite.BaseBackground
 var Width int
 var Height int
 var CurrentLevel int
@@ -41,16 +42,17 @@ func main() {
 	seed = time.Now().Unix()
 
 	src := rand.NewSource(seed)
-	bg := NewWell()
+	background = NewWell()
+	linesText := NewLinesText(0)
+	linesText.Y = background.Y - 2
+	linesText.X = background.X + 8
 
-	activeTetromino = getRandTetromino(src, bg)
-	activeTetromino.Stopped = false
-	activeTetromino.X = 20
-	activeTetromino.Y = 7
-	activeTetromino.SetGravity(CurrentLevel)
+	activeTetromino = getRandTetromino(src, background)
+	activeTetromino.PlaceInWell()
 
-	nextTetromino = getRandTetromino(src, bg)
+	nextTetromino = getRandTetromino(src, background)
 
+	allSprites.Sprites = append(allSprites.Sprites, linesText)
 	allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
 	allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
 
@@ -78,16 +80,14 @@ mainloop:
 				Height = ev.Height
 			}
 		default:
-			bg.Render()
+			background.Render()
 			allSprites.Update()
 			if activeTetromino.Stopped == true {
 				CheckRows()
+				linesText.UpdateLines(TotalLines)
 				activeTetromino = nextTetromino
-				activeTetromino.Stopped = false
-				activeTetromino.X = 20
-				activeTetromino.Y = 7
-				activeTetromino.SetGravity(CurrentLevel)
-				nextTetromino = getRandTetromino(src, bg)
+				activeTetromino.PlaceInWell()
+				nextTetromino = getRandTetromino(src, background)
 				allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
 			}
 			allSprites.Render()

@@ -43,6 +43,7 @@ func main() {
 
 	src := rand.NewSource(seed)
 	background = NewWell()
+	NewStats()
 	linesText := NewLinesText(0)
 	linesText.Y = background.Y - 2
 	linesText.X = background.X + 8
@@ -51,6 +52,7 @@ func main() {
 	activeTetromino.PlaceInWell()
 
 	nextTetromino = getRandTetromino(src, background)
+	nextTetromino.X = 45
 
 	allSprites.Sprites = append(allSprites.Sprites, linesText)
 	allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
@@ -88,6 +90,7 @@ mainloop:
 				activeTetromino = nextTetromino
 				activeTetromino.PlaceInWell()
 				nextTetromino = getRandTetromino(src, background)
+				nextTetromino.X = 45
 				allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
 			}
 			allSprites.Render()

@@ -142,9 +142,10 @@ type Tetromino struct {
 	Xoffset int
 	Yoffset int
 	Stopped bool
+	Type    string
 }
 
-func NewTetromino() *Tetromino {
+func NewTetromino(ttype string) *Tetromino {
 	t := &Tetromino{BaseSprite: sprite.BaseSprite{
 		Alpha:   'x',
 		Visible: true,
@@ -154,32 +155,48 @@ func NewTetromino() *Tetromino {
 		Timer:   0,
 		TimeOut: levelFPG[0],
 		Stopped: false,
+		Type:    ttype,
 	}
+
+	switch {
+	case ttype == "t":
+		t.AddCostume(sprite.NewCostume(t0, 'x'))
+		t.AddCostume(sprite.NewCostume(t1, 'x'))
+		t.AddCostume(sprite.NewCostume(t2, 'x'))
+		t.AddCostume(sprite.NewCostume(t3, 'x'))
+	case ttype == "j":
+		t.AddCostume(sprite.NewCostume(j0, 'x'))
+		t.AddCostume(sprite.NewCostume(j1, 'x'))
+		t.AddCostume(sprite.NewCostume(j2, 'x'))
+		t.AddCostume(sprite.NewCostume(j3, 'x'))
+	case ttype == "z":
+		t.AddCostume(sprite.NewCostume(z0, 'x'))
+		t.AddCostume(sprite.NewCostume(z1, 'x'))
+	case ttype == "sq":
+		t.AddCostume(sprite.NewCostume(sq0, 'x'))
+	case ttype == "s":
+		t.AddCostume(sprite.NewCostume(s0, 'x'))
+		t.AddCostume(sprite.NewCostume(s1, 'x'))
+	case ttype == "l":
+		t.AddCostume(sprite.NewCostume(l0, 'x'))
+		t.AddCostume(sprite.NewCostume(l1, 'x'))
+		t.AddCostume(sprite.NewCostume(l2, 'x'))
+		t.AddCostume(sprite.NewCostume(l3, 'x'))
+	case ttype == "i":
+		t.AddCostume(sprite.NewCostume(i0, 'x'))
+		t.AddCostume(sprite.NewCostume(i1, 'x'))
+	}
+
 	return t
 }
 
 func getRandTetromino(src rand.Source, bg sprite.BaseBackground) *Tetromino {
 	r := rand.New(src)
-	i := r.Intn(7)
+	ttypes := []string{"t", "j", "z", "sq", "s", "l", "i"}
 
-	var t *Tetromino
+	i := r.Intn(len(ttypes))
 
-	switch {
-	case i == 0:
-		t = NewL()
-	case i == 1:
-		t = NewJ()
-	case i == 2:
-		t = NewT()
-	case i == 3:
-		t = NewS()
-	case i == 4:
-		t = NewZ()
-	case i == 5:
-		t = NewI()
-	case i == 6:
-		t = NewSq()
-	}
+	t := NewTetromino(ttypes[i])
 
 	t.X = 3
 	t.Y = 10
@@ -189,6 +206,7 @@ func getRandTetromino(src rand.Source, bg sprite.BaseBackground) *Tetromino {
 }
 
 func (s *Tetromino) PlaceInWell() {
+	stats[s.Type].IncVal()
 	s.Y = background.Y - s.Costumes[s.CurrentCostume].TopEdge()
 	s.X = background.X + 10
 	s.Stopped = false
@@ -403,58 +421,4 @@ func removeBlock(x, y int) {
 
 func (s *Tetromino) MoveRight() {
 	findRightEdge(s)
-}
-
-func NewL() *Tetromino {
-	l := NewTetromino()
-	l.AddCostume(sprite.NewCostume(l0, 'x'))
-	l.AddCostume(sprite.NewCostume(l1, 'x'))
-	l.AddCostume(sprite.NewCostume(l2, 'x'))
-	l.AddCostume(sprite.NewCostume(l3, 'x'))
-	return l
-}
-
-func NewJ() *Tetromino {
-	j := NewTetromino()
-	j.AddCostume(sprite.NewCostume(j0, 'x'))
-	j.AddCostume(sprite.NewCostume(j1, 'x'))
-	j.AddCostume(sprite.NewCostume(j2, 'x'))
-	j.AddCostume(sprite.NewCostume(j3, 'x'))
-	return j
-}
-
-func NewT() *Tetromino {
-	t := NewTetromino()
-	t.AddCostume(sprite.NewCostume(t0, 'x'))
-	t.AddCostume(sprite.NewCostume(t1, 'x'))
-	t.AddCostume(sprite.NewCostume(t2, 'x'))
-	t.AddCostume(sprite.NewCostume(t3, 'x'))
-	return t
-}
-
-func NewS() *Tetromino {
-	s := NewTetromino()
-	s.AddCostume(sprite.NewCostume(s0, 'x'))
-	s.AddCostume(sprite.NewCostume(s1, 'x'))
-	return s
-}
-
-func NewZ() *Tetromino {
-	z := NewTetromino()
-	z.AddCostume(sprite.NewCostume(z0, 'x'))
-	z.AddCostume(sprite.NewCostume(z1, 'x'))
-	return z
-}
-
-func NewI() *Tetromino {
-	i := NewTetromino()
-	i.AddCostume(sprite.NewCostume(i0, 'x'))
-	i.AddCostume(sprite.NewCostume(i1, 'x'))
-	return i
-}
-
-func NewSq() *Tetromino {
-	sq := NewTetromino()
-	sq.AddCostume(sprite.NewCostume(sq0, 'x'))
-	return sq
 }

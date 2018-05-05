@@ -8,6 +8,7 @@ import (
 
 type LinesText struct {
 	sprite.BaseSprite
+	Val int
 }
 
 func NewLinesText(linesNum int) *LinesText {
@@ -27,6 +28,30 @@ func NewLinesText(linesNum int) *LinesText {
 func (s *LinesText) UpdateLines(linesNum int) {
 	l := fmt.Sprintf("LINES-%03d", linesNum)
 	s.Costumes[s.CurrentCostume].ChangeCostume(l, '!')
+}
+
+type LevelText struct {
+	sprite.BaseSprite
+	Val int
+}
+
+func NewLevelText(level int) *LevelText {
+	c := sprite.NewCostume(fmt.Sprintf("LEVEL\n  %01d", level), '!')
+
+	s := &LevelText{BaseSprite: sprite.BaseSprite{
+		X:       47,
+		Y:       20,
+		Visible: true,
+	},
+		Val: level,
+	}
+	s.AddCostume(c)
+	return s
+}
+
+func (s *LevelText) IncVal() {
+	s.Val++
+	s.Costumes[s.CurrentCostume].ChangeCostume(fmt.Sprintf("LEVEL\n  %01d", s.Val), '!')
 }
 
 func NewWell() sprite.BaseBackground {

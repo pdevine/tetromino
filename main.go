@@ -14,7 +14,7 @@ var allBlocks []*TetrominoBlock
 var background sprite.BaseBackground
 var Width int
 var Height int
-var CurrentLevel int
+var CurrentLevel *LevelText
 var TotalLines int
 
 func main() {
@@ -47,6 +47,7 @@ func main() {
 	linesText := NewLinesText(0)
 	linesText.Y = background.Y - 2
 	linesText.X = background.X + 8
+	CurrentLevel = NewLevelText(4)
 
 	activeTetromino = getRandTetromino(src, background)
 	activeTetromino.PlaceInWell()
@@ -55,6 +56,7 @@ func main() {
 	nextTetromino.X = 45
 
 	allSprites.Sprites = append(allSprites.Sprites, linesText)
+	allSprites.Sprites = append(allSprites.Sprites, CurrentLevel)
 	allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
 	allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
 
@@ -75,7 +77,7 @@ mainloop:
 				} else if ev.Key == tm.KeyArrowRight {
 					activeTetromino.MoveRight()
 				} else if ev.Key == tm.KeyArrowDown {
-					activeTetromino.Timer += levelFPG[CurrentLevel] / 2
+					activeTetromino.Timer += levelFPG[CurrentLevel.Val] / 2
 				}
 			} else if ev.Type == tm.EventResize {
 				Width = ev.Width
@@ -93,6 +95,7 @@ mainloop:
 				nextTetromino.X = 45
 				allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
 			}
+			Vaccuum()
 			allSprites.Render()
 			elapsed := time.Since(start)
 			time.Sleep(time.Second/60 - elapsed)

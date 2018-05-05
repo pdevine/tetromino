@@ -85,16 +85,37 @@ xx[][]`
 
 // Frames Per "Gridcell"
 var levelFPG = map[int]int{
-	0: 48,
-	1: 43,
-	2: 38,
-	3: 33,
-	4: 28,
-	5: 23,
-	6: 18,
-	7: 13,
-	8: 8,
-	9: 6,
+	0:  48,
+	1:  43,
+	2:  38,
+	3:  33,
+	4:  28,
+	5:  23,
+	6:  18,
+	7:  13,
+	8:  8,
+	9:  6,
+	10: 5,
+	11: 5,
+	12: 5,
+	13: 4,
+	14: 4,
+	15: 4,
+	16: 3,
+	17: 3,
+	18: 3,
+	19: 2,
+	20: 2,
+	21: 2,
+	22: 2,
+	23: 2,
+	24: 2,
+	25: 2,
+	26: 2,
+	27: 2,
+	28: 2,
+	29: 1,
+	30: 1,
 }
 
 func min(a, b int) int {
@@ -113,8 +134,9 @@ func max(a, b int) int {
 
 type TetrominoBlock struct {
 	sprite.BaseSprite
-	Xoffset int
-	Yoffset int
+	ClearDirection int
+	Xoffset        int
+	Yoffset        int
 }
 
 func NewTetrominoBlock(x, y int) *TetrominoBlock {
@@ -133,6 +155,58 @@ func NewTetrominoBlock(x, y int) *TetrominoBlock {
 		Yoffset: y,
 	}
 	return b
+}
+
+func (s *TetrominoBlock) Update() {
+	if s.ClearDirection != 0 {
+		if s.ClearDirection < 0 {
+			s.X--
+			if s.X-20 < 0 {
+				s.Visible = false
+				s.Dead = true
+			}
+		} else {
+			s.X++
+			if s.X-20 > 20 {
+				s.Visible = false
+				s.Dead = true
+			}
+		}
+	}
+}
+
+func Vaccuum() {
+	rows := make(map[int][]*TetrominoBlock)
+	rowKeys := []int{}
+
+	for _, b := range allBlocks {
+		rows[b.Y] = append(rows[b.Y], b)
+	}
+
+	for y, _ := range rows {
+		rowKeys = append(rowKeys, y)
+	}
+
+	sort.Sort(sort.IntSlice(rowKeys))
+
+	for _, y := range rowKeys {
+		dead := true
+		for _, blk := range rows[y] {
+			if !blk.Dead {
+				dead = false
+			}
+		}
+		if dead {
+			for _, blk := range rows[y] {
+				removeBlock(blk)
+			}
+			for _, b := range allBlocks {
+				if y > b.Y {
+					b.Y++
+				}
+			}
+		}
+	}
 }
 
 type Tetromino struct {
@@ -210,7 +284,7 @@ func (s *Tetromino) PlaceInWell() {
 	s.Y = background.Y - s.Costumes[s.CurrentCostume].TopEdge()
 	s.X = background.X + 10
 	s.Stopped = false
-	s.TimeOut = levelFPG[CurrentLevel]
+	s.TimeOut = levelFPG[CurrentLevel.Val]
 }
 
 func (s *Tetromino) Update() {
@@ -344,42 +418,32 @@ func (s *Tetromino) MoveLeft() {
 	findLeftEdge(s)
 }
 
-func CheckRows() {
-	// 1. get all of the blocks in row
-	// 2. check if there are no gaps
-	// 3. if the row is complete:
-	// 4.   delete the row
-	tm.SetCursor(0, 0)
+func (s *Tetromino) MoveRight() {
+	findRightEdge(s)
+}
 
-	rows := make(map[int][]int)
-	var rowKeys []int
+func CheckRows() {
+	rows := make(map[int][]*TetrominoBlock)
 
 	for _, b := range allBlocks {
-		rows[b.Y] = append(rows[b.Y], b.X)
+		rows[b.Y] = append(rows[b.Y], b)
 	}
 
-	for r := range rows {
-		rowKeys = append(rowKeys, r)
-	}
-
-	// remove blocks from the top first
-	sort.Sort(sort.IntSlice(rowKeys))
-
-	for _, y := range rowKeys {
-		if len(rows[y]) == 10 {
+	// Clear any lines
+	for _, row := range rows {
+		if len(row) == 10 {
 			TotalLines++
-			// remove blocks
-			for _, x := range rows[y] {
-				removeBlock(x, y)
-			}
-
-			// move blocks by one row
-			for _, b := range allBlocks {
-				if b.Y < y {
-					b.Y = b.Y + 1
+			for _, b := range row {
+				if b.X-20 > 10 {
+					b.ClearDirection = 1
+				} else {
+					b.ClearDirection = -1
 				}
 			}
 		}
+	}
+	if TotalLines >= (CurrentLevel.Val+1)*10 {
+		CurrentLevel.IncVal()
 	}
 }
 
@@ -397,28 +461,22 @@ func printRows(rows map[int][]int) {
 	fmt.Printf("******")
 }
 
-func getBlockIndex(x, y int) (bool, int) {
+func getBlockIndex(b *TetrominoBlock) (bool, int) {
 	for cnt, blk := range allBlocks {
-		if blk.X == x && blk.Y == y {
+		if blk == b {
 			return true, cnt
 		}
 	}
 	return false, -1
 }
 
-func removeBlock(x, y int) {
-	ok, idx := getBlockIndex(x, y)
-	blk := allBlocks[idx]
+func removeBlock(b *TetrominoBlock) bool {
+	ok, idx := getBlockIndex(b)
 	if ok {
-		allSprites.Remove(blk)
+		allSprites.Remove(b)
 		copy(allBlocks[idx:], allBlocks[idx+1:])
 		allBlocks[len(allBlocks)-1] = nil
 		allBlocks = allBlocks[:len(allBlocks)-1]
-	} else {
-		fmt.Printf("couldn't remove block at %d, %d", x, y)
 	}
-}
-
-func (s *Tetromino) MoveRight() {
-	findRightEdge(s)
+	return ok
 }

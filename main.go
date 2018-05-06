@@ -11,11 +11,13 @@ import (
 
 var allSprites sprite.SpriteGroup
 var allBlocks []*TetrominoBlock
-var background sprite.BaseBackground
+var background *Well
 var Width int
 var Height int
 var CurrentLevel *LevelText
 var TotalLines int
+var activeTetromino *Tetromino
+var nextTetromino *Tetromino
 
 func main() {
 	// XXX - hack to make this work inside of a Docker container
@@ -36,8 +38,6 @@ func main() {
 		}
 	}()
 
-	var activeTetromino *Tetromino
-	var nextTetromino *Tetromino
 	var seed int64
 	seed = time.Now().Unix()
 
@@ -47,7 +47,7 @@ func main() {
 	linesText := NewLinesText(0)
 	linesText.Y = background.Y - 2
 	linesText.X = background.X + 8
-	CurrentLevel = NewLevelText(4)
+	CurrentLevel = NewLevelText(0)
 
 	activeTetromino = getRandTetromino(src, background)
 	activeTetromino.PlaceInWell()
@@ -55,6 +55,7 @@ func main() {
 	nextTetromino = getRandTetromino(src, background)
 	nextTetromino.X = 45
 
+	allSprites.Sprites = append(allSprites.Sprites, background)
 	allSprites.Sprites = append(allSprites.Sprites, linesText)
 	allSprites.Sprites = append(allSprites.Sprites, CurrentLevel)
 	allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
@@ -84,7 +85,6 @@ mainloop:
 				Height = ev.Height
 			}
 		default:
-			background.Render()
 			allSprites.Update()
 			if activeTetromino.Stopped == true {
 				CheckRows()

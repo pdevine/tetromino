@@ -6,6 +6,29 @@ import (
 	sprite "github.com/pdevine/go-asciisprite"
 )
 
+var areToHeight = map[int]int{
+	20: 10,
+	19: 10,
+	18: 12,
+	17: 12,
+	16: 12,
+	15: 12,
+	14: 14,
+	13: 14,
+	12: 14,
+	11: 14,
+	10: 16,
+	9:  16,
+	8:  16,
+	7:  16,
+	6:  18,
+	5:  18,
+	4:  18,
+	3:  18,
+	2:  18,
+	1:  18,
+}
+
 type LinesText struct {
 	sprite.BaseSprite
 	Val int
@@ -54,11 +77,18 @@ func (s *LevelText) IncVal() {
 	s.Costumes[s.CurrentCostume].ChangeCostume(fmt.Sprintf("LEVEL\n  %01d", s.Val), '!')
 }
 
-func NewWell() sprite.BaseBackground {
-	bg := sprite.BaseBackground{
+type Well struct {
+	sprite.BaseBackground
+	Timer   int
+	TimeOut int
+}
+
+func NewWell() *Well {
+	bg := &Well{BaseBackground: sprite.BaseBackground{
 		X:     20,
 		Y:     10,
 		Tiled: false,
+	},
 	}
 
 	block_size := 2
@@ -102,4 +132,7 @@ func NewWell() sprite.BaseBackground {
 		bg.Background = append(bg.Background, b)
 	}
 	return bg
+}
+
+func (s *Well) Update() {
 }

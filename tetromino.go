@@ -175,40 +175,6 @@ func (s *TetrominoBlock) Update() {
 	}
 }
 
-func Vaccuum() {
-	rows := make(map[int][]*TetrominoBlock)
-	rowKeys := []int{}
-
-	for _, b := range allBlocks {
-		rows[b.Y] = append(rows[b.Y], b)
-	}
-
-	for y, _ := range rows {
-		rowKeys = append(rowKeys, y)
-	}
-
-	sort.Sort(sort.IntSlice(rowKeys))
-
-	for _, y := range rowKeys {
-		dead := true
-		for _, blk := range rows[y] {
-			if !blk.Dead {
-				dead = false
-			}
-		}
-		if dead {
-			for _, blk := range rows[y] {
-				removeBlock(blk)
-			}
-			for _, b := range allBlocks {
-				if y > b.Y {
-					b.Y++
-				}
-			}
-		}
-	}
-}
-
 type Tetromino struct {
 	sprite.BaseSprite
 	TimeOut int
@@ -264,7 +230,7 @@ func NewTetromino(ttype string) *Tetromino {
 	return t
 }
 
-func getRandTetromino(src rand.Source, bg sprite.BaseBackground) *Tetromino {
+func getRandTetromino(src rand.Source, bg *Well) *Tetromino {
 	r := rand.New(src)
 	ttypes := []string{"t", "j", "z", "sq", "s", "l", "i"}
 
@@ -444,6 +410,39 @@ func CheckRows() {
 	}
 	if TotalLines >= (CurrentLevel.Val+1)*10 {
 		CurrentLevel.IncVal()
+	}
+}
+
+func Vaccuum() {
+	rows := make(map[int][]*TetrominoBlock)
+	rowKeys := []int{}
+
+	for _, b := range allBlocks {
+		rows[b.Y] = append(rows[b.Y], b)
+	}
+
+	for y, _ := range rows {
+		rowKeys = append(rowKeys, y)
+	}
+	sort.Sort(sort.IntSlice(rowKeys))
+
+	for _, y := range rowKeys {
+		dead := true
+		for _, blk := range rows[y] {
+			if !blk.Dead {
+				dead = false
+			}
+		}
+		if dead {
+			for _, blk := range rows[y] {
+				removeBlock(blk)
+			}
+			for _, b := range allBlocks {
+				if y > b.Y {
+					b.Y++
+				}
+			}
+		}
 	}
 }
 

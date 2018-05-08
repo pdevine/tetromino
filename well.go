@@ -135,4 +135,14 @@ func NewWell() *Well {
 }
 
 func (s *Well) Update() {
+	if activeTetromino.Stopped == true {
+		CheckRows()
+		linesText.UpdateLines(TotalLines)
+		activeTetromino = nextTetromino
+		activeTetromino.PlaceInWell()
+		nextTetromino = getRandTetromino(src, background)
+		nextTetromino.X = 45
+		allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
+	}
+	Vaccuum()
 }

@@ -18,6 +18,8 @@ var CurrentLevel *LevelText
 var TotalLines int
 var activeTetromino *Tetromino
 var nextTetromino *Tetromino
+var linesText *LinesText
+var src rand.Source
 
 func main() {
 	// XXX - hack to make this work inside of a Docker container
@@ -41,10 +43,10 @@ func main() {
 	var seed int64
 	seed = time.Now().Unix()
 
-	src := rand.NewSource(seed)
+	src = rand.NewSource(seed)
 	background = NewWell()
 	NewStats()
-	linesText := NewLinesText(0)
+	linesText = NewLinesText(0)
 	linesText.Y = background.Y - 2
 	linesText.X = background.X + 8
 	CurrentLevel = NewLevelText(0)
@@ -55,7 +57,6 @@ func main() {
 	nextTetromino = getRandTetromino(src, background)
 	nextTetromino.X = 45
 
-	allSprites.Sprites = append(allSprites.Sprites, background)
 	allSprites.Sprites = append(allSprites.Sprites, linesText)
 	allSprites.Sprites = append(allSprites.Sprites, CurrentLevel)
 	allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
@@ -86,16 +87,8 @@ mainloop:
 			}
 		default:
 			allSprites.Update()
-			if activeTetromino.Stopped == true {
-				CheckRows()
-				linesText.UpdateLines(TotalLines)
-				activeTetromino = nextTetromino
-				activeTetromino.PlaceInWell()
-				nextTetromino = getRandTetromino(src, background)
-				nextTetromino.X = 45
-				allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
-			}
-			Vaccuum()
+			background.Update()
+			background.Render()
 			allSprites.Render()
 			elapsed := time.Since(start)
 			time.Sleep(time.Second/60 - elapsed)

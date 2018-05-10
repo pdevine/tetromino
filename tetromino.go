@@ -150,6 +150,7 @@ func NewTetrominoBlock(x, y int) *TetrominoBlock {
 		Costumes:       []sprite.Costume{c},
 		CurrentCostume: 0,
 		Visible:        true,
+		Dead:           false,
 	},
 		Xoffset: x,
 		Yoffset: y,
@@ -243,6 +244,10 @@ func getRandTetromino(src rand.Source, bg *Well) *Tetromino {
 	t.Stopped = true
 
 	return t
+}
+
+func (s *Tetromino) BottomEdgeHeight() int {
+	return s.Y + s.Costumes[s.CurrentCostume].BottomEdge() - s.Yoffset
 }
 
 func (s *Tetromino) PlaceInWell() {
@@ -389,6 +394,8 @@ func (s *Tetromino) MoveRight() {
 }
 
 func CheckRows() {
+	var rowsCleared uint8
+
 	rows := make(map[int][]*TetrominoBlock)
 
 	for _, b := range allBlocks {
@@ -398,6 +405,7 @@ func CheckRows() {
 	// Clear any lines
 	for _, row := range rows {
 		if len(row) == 10 {
+			rowsCleared++
 			TotalLines++
 			for _, b := range row {
 				if b.X-20 > 10 {
@@ -411,6 +419,19 @@ func CheckRows() {
 	if TotalLines >= (CurrentLevel.Val+1)*10 {
 		CurrentLevel.IncVal()
 	}
+
+	switch {
+	case rowsCleared == 1:
+		scoreText.AddVal(40 * (CurrentLevel.Val + 1))
+	case rowsCleared == 2:
+		scoreText.AddVal(100 * (CurrentLevel.Val + 1))
+	case rowsCleared == 3:
+		scoreText.AddVal(300 * (CurrentLevel.Val + 1))
+	case rowsCleared == 4:
+		scoreText.AddVal(1200 * (CurrentLevel.Val + 1))
+	}
+
+	scoreText.AddVal(nextScore)
 }
 
 func Vaccuum() {

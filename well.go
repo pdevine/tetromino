@@ -6,6 +6,7 @@ import (
 	sprite "github.com/pdevine/go-asciisprite"
 )
 
+// are (time to wait) before next tetromino
 var areToHeight = map[int]int{
 	20: 10,
 	19: 10,
@@ -77,6 +78,30 @@ func (s *LevelText) IncVal() {
 	s.Costumes[s.CurrentCostume].ChangeCostume(fmt.Sprintf("LEVEL\n  %01d", s.Val), '!')
 }
 
+type ScoreText struct {
+	sprite.BaseSprite
+	Val int
+}
+
+func NewScoreText() *ScoreText {
+	c := sprite.NewCostume(fmt.Sprintf("SCORE\n%07d", 0), '!')
+
+	s := &ScoreText{BaseSprite: sprite.BaseSprite{
+		X:       47,
+		Y:       4,
+		Visible: true,
+	},
+		Val: 0,
+	}
+	s.AddCostume(c)
+	return s
+}
+
+func (s *ScoreText) AddVal(v int) {
+	s.Val += v
+	s.Costumes[s.CurrentCostume].ChangeCostume(fmt.Sprintf("SCORE\n%07d", s.Val), '!')
+}
+
 type Well struct {
 	sprite.BaseBackground
 	Timer   int
@@ -135,14 +160,22 @@ func NewWell() *Well {
 }
 
 func (s *Well) Update() {
-	if activeTetromino.Stopped == true {
+	if activeTetromino.Stopped && !activeTetromino.Dead {
+		s.TimeOut = areToHeight[activeTetromino.BottomEdgeHeight()]
+		s.Timer = 0
+		activeTetromino.Dead = true
 		CheckRows()
 		linesText.UpdateLines(TotalLines)
-		activeTetromino = nextTetromino
-		activeTetromino.PlaceInWell()
-		nextTetromino = getRandTetromino(src, background)
-		nextTetromino.X = 45
-		allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
+	} else if activeTetromino.Dead {
+		if s.Timer >= s.TimeOut {
+			nextScore = 0
+			activeTetromino = nextTetromino
+			activeTetromino.PlaceInWell()
+			nextTetromino = getRandTetromino(src, background)
+			nextTetromino.X = 45
+			allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
+		}
+		s.Timer++
 	}
 	Vaccuum()
 }

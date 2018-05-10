@@ -17,8 +17,10 @@ var Height int
 var CurrentLevel *LevelText
 var TotalLines int
 var activeTetromino *Tetromino
+var nextScore int
 var nextTetromino *Tetromino
 var linesText *LinesText
+var scoreText *ScoreText
 var src rand.Source
 
 func main() {
@@ -50,6 +52,7 @@ func main() {
 	linesText.Y = background.Y - 2
 	linesText.X = background.X + 8
 	CurrentLevel = NewLevelText(0)
+	scoreText = NewScoreText()
 
 	activeTetromino = getRandTetromino(src, background)
 	activeTetromino.PlaceInWell()
@@ -58,6 +61,7 @@ func main() {
 	nextTetromino.X = 45
 
 	allSprites.Sprites = append(allSprites.Sprites, linesText)
+	allSprites.Sprites = append(allSprites.Sprites, scoreText)
 	allSprites.Sprites = append(allSprites.Sprites, CurrentLevel)
 	allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
 	allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
@@ -80,6 +84,7 @@ mainloop:
 					activeTetromino.MoveRight()
 				} else if ev.Key == tm.KeyArrowDown {
 					activeTetromino.Timer += levelFPG[CurrentLevel.Val] / 2
+					nextScore += 4
 				}
 			} else if ev.Type == tm.EventResize {
 				Width = ev.Width

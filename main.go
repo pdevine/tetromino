@@ -22,6 +22,7 @@ var nextTetromino *Tetromino
 var linesText *LinesText
 var scoreText *ScoreText
 var src rand.Source
+var gameOver bool
 
 func main() {
 	// XXX - hack to make this work inside of a Docker container
@@ -44,6 +45,7 @@ func main() {
 
 	var seed int64
 	seed = time.Now().Unix()
+	gameOver = false
 
 	src = rand.NewSource(seed)
 	background = NewWell()

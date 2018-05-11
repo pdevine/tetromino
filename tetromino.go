@@ -254,6 +254,15 @@ func (s *Tetromino) PlaceInWell() {
 	stats[s.Type].IncVal()
 	s.Y = background.Y - s.Costumes[s.CurrentCostume].TopEdge()
 	s.X = background.X + 10
+
+	for _, b := range allBlocks {
+		for _, c := range s.Costumes[s.CurrentCostume].Blocks {
+			if c.X+s.X == b.X && c.Y+s.Y == b.Y {
+				gameOver = true
+			}
+		}
+	}
+
 	s.Stopped = false
 	s.TimeOut = levelFPG[CurrentLevel.Val]
 }

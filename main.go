@@ -22,7 +22,16 @@ var nextTetromino *Tetromino
 var linesText *LinesText
 var scoreText *ScoreText
 var src rand.Source
-var gameOver bool
+
+const (
+	title = iota
+	play
+	gameover
+	cathedral
+)
+
+//var gamemode = gameover
+var gamemode = play
 
 func main() {
 	// XXX - hack to make this work inside of a Docker container
@@ -45,16 +54,17 @@ func main() {
 
 	var seed int64
 	seed = time.Now().Unix()
-	gameOver = false
 
 	src = rand.NewSource(seed)
 	background = NewWell()
+	background.TimeOut = 20
 	NewStats()
 	linesText = NewLinesText(0)
 	linesText.Y = background.Y - 2
 	linesText.X = background.X + 8
 	CurrentLevel = NewLevelText(0)
 	scoreText = NewScoreText()
+	//scoreText.AddVal(140000)
 
 	activeTetromino = getRandTetromino(src, background)
 	activeTetromino.PlaceInWell()
@@ -95,7 +105,9 @@ mainloop:
 		default:
 			allSprites.Update()
 			background.Update()
-			background.Render()
+			if gamemode != cathedral {
+				background.Render()
+			}
 			allSprites.Render()
 			elapsed := time.Since(start)
 			time.Sleep(time.Second/60 - elapsed)

@@ -163,14 +163,31 @@ func NewWell() *Well {
 }
 
 func (s *Well) Update() {
-	if gameOver {
+	if gamemode == gameover || gamemode == cathedral {
 		s.Timer++
-		if s.Timer >= s.TimeOut && s.FilledLines <= 20 {
-			c := sprite.NewCostume(wellLine, '~')
-			l := sprite.NewBaseSprite(s.X+2, s.Y+s.FilledLines, c)
-			allSprites.Sprites = append(allSprites.Sprites, l)
-			s.Timer = 10
-			s.FilledLines++
+		if gamemode == gameover {
+			if s.Timer >= s.TimeOut && s.FilledLines <= 20 {
+				c := sprite.NewCostume(wellLine, '~')
+				l := sprite.NewBaseSprite(s.X+2, s.Y+s.FilledLines, c)
+				allSprites.Sprites = append(allSprites.Sprites, l)
+				s.Timer = 10
+				s.FilledLines++
+			} else if s.FilledLines >= 20 {
+				if scoreText.Val < 30000 {
+					return
+				}
+				for _, ts := range allSprites.Sprites {
+					allSprites.Remove(ts)
+				}
+				gamemode = cathedral
+				c := NewCathedral(scoreText.Val)
+				l := NewLaunchPad()
+				r := NewRocket(scoreText.Val)
+
+				allSprites.Sprites = append(allSprites.Sprites, c)
+				allSprites.Sprites = append(allSprites.Sprites, l)
+				allSprites.Sprites = append(allSprites.Sprites, r)
+			}
 		}
 		return
 	}

@@ -258,7 +258,9 @@ func (s *Tetromino) PlaceInWell() {
 	for _, b := range allBlocks {
 		for _, c := range s.Costumes[s.CurrentCostume].Blocks {
 			if c.X+s.X == b.X && c.Y+s.Y == b.Y {
-				gameOver = true
+				gamemode = gameover
+				background.TimeOut = 20
+				return
 			}
 		}
 	}

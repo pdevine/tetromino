@@ -25,13 +25,14 @@ var src rand.Source
 
 const (
 	title = iota
+	levelselect
 	play
 	gameover
 	cathedral
 )
 
 //var gamemode = gameover
-var gamemode = play
+var gamemode = levelselect
 
 func main() {
 	// XXX - hack to make this work inside of a Docker container
@@ -58,25 +59,14 @@ func main() {
 	src = rand.NewSource(seed)
 	background = NewWell()
 	background.TimeOut = 20
-	NewStats()
 	linesText = NewLinesText(0)
 	linesText.Y = background.Y - 2
 	linesText.X = background.X + 8
-	CurrentLevel = NewLevelText(0)
 	scoreText = NewScoreText()
 	//scoreText.AddVal(140000)
 
-	activeTetromino = getRandTetromino(src, background)
-	activeTetromino.PlaceInWell()
-
-	nextTetromino = getRandTetromino(src, background)
-	nextTetromino.X = 45
-
-	allSprites.Sprites = append(allSprites.Sprites, linesText)
-	allSprites.Sprites = append(allSprites.Sprites, scoreText)
-	allSprites.Sprites = append(allSprites.Sprites, CurrentLevel)
-	allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
-	allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
+	selector := NewSelector()
+	allSprites.Sprites = append(allSprites.Sprites, selector)
 
 mainloop:
 	for {
@@ -88,15 +78,48 @@ mainloop:
 			if ev.Type == tm.EventKey {
 				if ev.Key == tm.KeyEsc {
 					break mainloop
+				} else if ev.Key == tm.KeyEnter {
+					if gamemode == levelselect {
+						NewStats()
+						CurrentLevel = NewLevelText(selector.GetVal())
+						activeTetromino = getRandTetromino(src, background)
+						activeTetromino.PlaceInWell()
+						nextTetromino = getRandTetromino(src, background)
+						nextTetromino.X = 45
+						allSprites.Sprites = append(allSprites.Sprites, linesText)
+						allSprites.Sprites = append(allSprites.Sprites, scoreText)
+						allSprites.Sprites = append(allSprites.Sprites, CurrentLevel)
+						allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
+						allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
+						allSprites.Remove(selector)
+						gamemode = play
+					}
+
 				} else if ev.Key == tm.KeySpace {
 					activeTetromino.RotateClockwise()
 				} else if ev.Key == tm.KeyArrowLeft {
-					activeTetromino.MoveLeft()
+					if gamemode == levelselect {
+						selector.MoveLeft()
+					} else if gamemode == play {
+						activeTetromino.MoveLeft()
+					}
 				} else if ev.Key == tm.KeyArrowRight {
-					activeTetromino.MoveRight()
+					if gamemode == levelselect {
+						selector.MoveRight()
+					} else if gamemode == play {
+						activeTetromino.MoveRight()
+					}
+				} else if ev.Key == tm.KeyArrowUp {
+					if gamemode == levelselect {
+						selector.MoveUp()
+					}
 				} else if ev.Key == tm.KeyArrowDown {
-					activeTetromino.Timer += levelFPG[CurrentLevel.Val] / 2
-					nextScore += 4
+					if gamemode == levelselect {
+						selector.MoveDown()
+					} else if gamemode == play {
+						activeTetromino.Timer += levelFPG[CurrentLevel.Val] / 2
+						nextScore += 4
+					}
 				}
 			} else if ev.Type == tm.EventResize {
 				Width = ev.Width
@@ -104,8 +127,8 @@ mainloop:
 			}
 		default:
 			allSprites.Update()
-			background.Update()
-			if gamemode != cathedral {
+			if gamemode == play || gamemode == gameover {
+				background.Update()
 				background.Render()
 			}
 			allSprites.Render()

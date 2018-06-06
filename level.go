@@ -33,7 +33,7 @@ func addLine(y int, c *sprite.Costume) {
 func NewSelector() *LevelSelector {
 
 	s := &LevelSelector{BaseSprite: sprite.BaseSprite{
-		X:       10,
+		X:       30,
 		Y:       10,
 		Visible: true,
 	},

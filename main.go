@@ -31,8 +31,7 @@ const (
 	cathedral
 )
 
-//var gamemode = gameover
-var gamemode = levelselect
+var gamemode = title
 
 func main() {
 	// XXX - hack to make this work inside of a Docker container
@@ -63,10 +62,13 @@ func main() {
 	linesText.Y = background.Y - 2
 	linesText.X = background.X + 8
 	scoreText = NewScoreText()
-	//scoreText.AddVal(140000)
+
+	t := NewTitle()
+	tstr := NewTitleString()
+	allSprites.Sprites = append(allSprites.Sprites, t)
+	allSprites.Sprites = append(allSprites.Sprites, tstr)
 
 	selector := NewSelector()
-	allSprites.Sprites = append(allSprites.Sprites, selector)
 
 mainloop:
 	for {
@@ -79,7 +81,12 @@ mainloop:
 				if ev.Key == tm.KeyEsc {
 					break mainloop
 				} else if ev.Key == tm.KeyEnter {
-					if gamemode == levelselect {
+					if gamemode == title {
+						gamemode = levelselect
+						allSprites.Remove(t)
+						allSprites.Remove(tstr)
+						allSprites.Sprites = append(allSprites.Sprites, selector)
+					} else if gamemode == levelselect {
 						NewStats()
 						CurrentLevel = NewLevelText(selector.GetVal())
 						activeTetromino = getRandTetromino(src, background)
@@ -94,9 +101,12 @@ mainloop:
 						allSprites.Remove(selector)
 						gamemode = play
 					}
-
 				} else if ev.Key == tm.KeySpace {
-					activeTetromino.RotateClockwise()
+					if gamemode == title {
+						gamemode = levelselect
+					} else if gamemode == play {
+						activeTetromino.RotateClockwise()
+					}
 				} else if ev.Key == tm.KeyArrowLeft {
 					if gamemode == levelselect {
 						selector.MoveLeft()

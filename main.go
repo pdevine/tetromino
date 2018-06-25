@@ -104,6 +104,9 @@ mainloop:
 				} else if ev.Key == tm.KeySpace {
 					if gamemode == title {
 						gamemode = levelselect
+						allSprites.Remove(t)
+						allSprites.Remove(tstr)
+						allSprites.Sprites = append(allSprites.Sprites, selector)
 					} else if gamemode == play {
 						activeTetromino.RotateClockwise()
 					}

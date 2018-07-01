@@ -10,6 +10,44 @@ Try it out with the command:
   $ docker run -it --rm pdevine/tetromino
 ```
 
+It should look something like:
+
+```
+                                               SCORE
+                                               0000128                      
+                                                                            
+                                                                            
+                            LINES-000                                       
+     [][][]  001                                                            
+       []           <!                    !>                              
+                    <!                    !> [][][]
+     []             <!                    !>   []          
+     [][][]  002    <!                    !>
+                    <!                    !>
+                    <!                    !>
+                    <!                    !>
+     [][]    003    <!                    !>               
+       [][]         <!                    !>               
+                    <!                    !>               
+                    <!        [][]        !>   LEVEL
+       [][]  000    <!          [][]      !>     6         
+       [][]         <!                    !>
+                    <!                    !>
+                    <!                    !>
+       [][]  000    <!                    !>
+     [][]           <!                    !>
+                    <!    []              !>
+         []         <!  [][][][][]  []    !>
+     [][][]  001    <![][][][][][][][]    !>
+                    <![][][][][][][][][]  !>
+                      ********************
+
+             000
+     [][][][]
+
+```
+
+
 This game was written because of an offhand remark my boss made to me in 1994.  I had just finished up two years of college
 in Vancouver, British Columbia when I had taken a job at Radical Entertainment to write Super Nintendo games.  I wasn't
 a particularly great programmer at the time (which is arguably still true), however, I found writing games in 65816 Assembly

@@ -83,8 +83,6 @@ mainloop:
 				} else if ev.Key == tm.KeyEnter {
 					if gamemode == title {
 						gamemode = levelselect
-						allSprites.Remove(t)
-						allSprites.Remove(tstr)
 						allSprites.Sprites = append(allSprites.Sprites, selector)
 					} else if gamemode == levelselect {
 						NewStats()
@@ -99,13 +97,13 @@ mainloop:
 						allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
 						allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
 						allSprites.Remove(selector)
+						allSprites.Remove(t)
+						allSprites.Remove(tstr)
 						gamemode = play
 					}
 				} else if ev.Key == tm.KeySpace {
 					if gamemode == title {
 						gamemode = levelselect
-						allSprites.Remove(t)
-						allSprites.Remove(tstr)
 						allSprites.Sprites = append(allSprites.Sprites, selector)
 					} else if gamemode == play {
 						activeTetromino.RotateClockwise()

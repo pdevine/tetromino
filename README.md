@@ -74,7 +74,7 @@ the sprite library, the choice for the first game to write seemed pretty natural
 weekend?
 
 The answer is a pretty definitive "yes".  Even though I've spent more than a weekend writing Tetromino 
-onika, the core of the game was written in about that amount of time, mostly spent riding Caltrain up and down the peninsula
+Elektronika, the core of the game was written in about that amount of time, mostly spent riding Caltrain up and down the peninsula
 in the SF Bay Area.  I tried to keep things as close as possible in terms of timings with the original Classic NES Tetris game
 (sorry, no hard drops!), and tried to make the look-and-feel similar to the original Tetris from 1984 on the old Soviet based
 Electronika 60.

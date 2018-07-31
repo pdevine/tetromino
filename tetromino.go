@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"sort"
 
-	tm "github.com/nsf/termbox-go"
+	tm "github.com/gdamore/tcell/termbox"
 	sprite "github.com/pdevine/go-asciisprite"
 )
 

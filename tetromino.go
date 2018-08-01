@@ -283,6 +283,19 @@ func (s *Tetromino) Update() {
 }
 
 func (s *Tetromino) RotateClockwise() {
+	// fudge for the "i" piece
+	ioffset := 0
+	if s.Type == "i" {
+		ioffset += 2
+	}
+
+	// don't turn blocks on the edges
+	if s.X-s.Xoffset < 0 {
+		return
+	} else if s.X-s.Xoffset+ioffset > 15 {
+		return
+	}
+
 	s.CurrentCostume = s.CurrentCostume + 1
 	if s.CurrentCostume >= len(s.Costumes) {
 		s.CurrentCostume = 0
@@ -297,6 +310,9 @@ func (s *Tetromino) RotateClockwise() {
 }
 
 func (s *Tetromino) RotateAnticlockwise() {
+	if s.X-s.Xoffset < 0 {
+		return
+	}
 	s.CurrentCostume = s.CurrentCostume - 1
 	if s.CurrentCostume < 0 {
 		s.CurrentCostume = len(s.Costumes) - 1

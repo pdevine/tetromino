@@ -270,6 +270,9 @@ func (s *Tetromino) PlaceInWell() {
 }
 
 func (s *Tetromino) Update() {
+	if gamemode == paused {
+		return
+	}
 	if !s.Stopped {
 		s.Timer = s.Timer + 1
 		if s.Timer >= s.TimeOut {

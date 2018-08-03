@@ -109,6 +109,8 @@ type Well struct {
 	Timer       int
 	TimeOut     int
 	FilledLines int
+	Paused      bool
+	PauseSprite *sprite.BaseSprite
 }
 
 func NewWell() *Well {
@@ -190,6 +192,23 @@ func (s *Well) Update() {
 			}
 		}
 		return
+	} else if gamemode == paused && !s.Paused {
+		// fill the well when we're paused
+		var filledWell string
+		for n := 0; n <= 20; n++ {
+			filledWell += wellLine + "\n"
+		}
+		c := sprite.NewCostume(filledWell, '~')
+		s.PauseSprite = sprite.NewBaseSprite(s.X+2, s.Y, c)
+		allSprites.Sprites = append(allSprites.Sprites, s.PauseSprite)
+		s.Paused = true
+		return
+	}
+
+	// remove the bricks
+	if gamemode == play && s.Paused {
+		allSprites.Remove(s.PauseSprite)
+		s.Paused = false
 	}
 
 	if activeTetromino.Stopped && !activeTetromino.Dead {

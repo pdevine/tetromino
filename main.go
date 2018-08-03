@@ -27,6 +27,7 @@ const (
 	title = iota
 	levelselect
 	play
+	paused
 	gameover
 	cathedral
 )
@@ -131,6 +132,12 @@ mainloop:
 						activeTetromino.Timer += levelFPG[CurrentLevel.Val] / 2
 						nextScore += 4
 					}
+				} else if ev.Ch == 'p' || ev.Ch == 'P' {
+					if gamemode == paused {
+						gamemode = play
+					} else if gamemode == play {
+						gamemode = paused
+					}
 				}
 			} else if ev.Type == tm.EventResize {
 				Width = ev.Width
@@ -138,7 +145,7 @@ mainloop:
 			}
 		default:
 			allSprites.Update()
-			if gamemode == play || gamemode == gameover {
+			if gamemode == play || gamemode == gameover || gamemode == paused {
 				background.Update()
 				background.Render()
 			}

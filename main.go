@@ -106,6 +106,13 @@ mainloop:
 					if gamemode == title {
 						gamemode = levelselect
 						allSprites.Sprites = append(allSprites.Sprites, selector)
+					} else if gamemode == levelselect {
+						selector.NextCostume()
+						if selector.currentLevel < 10 {
+							selector.SetLevel(selector.currentLevel + 10)
+						} else {
+							selector.SetLevel(selector.currentLevel - 10)
+						}
 					} else if gamemode == play {
 						activeTetromino.RotateClockwise()
 					}

@@ -303,13 +303,6 @@ func (s *Tetromino) RotateClockwise() {
 	if s.CurrentCostume >= len(s.Costumes) {
 		s.CurrentCostume = 0
 	}
-	/*
-		if s.X < s.Xoffset+2 {
-			if s.X-s.Xoffset < -findLeftEdge(s) {
-				s.X = s.X + 2
-			}
-		}
-	*/
 }
 
 func (s *Tetromino) RotateAnticlockwise() {
@@ -319,6 +312,16 @@ func (s *Tetromino) RotateAnticlockwise() {
 	s.CurrentCostume = s.CurrentCostume - 1
 	if s.CurrentCostume < 0 {
 		s.CurrentCostume = len(s.Costumes) - 1
+	}
+}
+
+func (s *Tetromino) Drop() {
+	for {
+		findBottomEdge(s)
+		if s.Stopped {
+			break
+		}
+		s.Y = s.Y + 1
 	}
 }
 

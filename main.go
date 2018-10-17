@@ -81,11 +81,13 @@ mainloop:
 			if ev.Type == tm.EventKey {
 				if ev.Key == tm.KeyEsc {
 					break mainloop
+				}
+				if gamemode == title {
+					gamemode = levelselect
+					allSprites.Sprites = append(allSprites.Sprites, selector)
 				} else if ev.Key == tm.KeyEnter {
-					if gamemode == title {
-						gamemode = levelselect
-						allSprites.Sprites = append(allSprites.Sprites, selector)
-					} else if gamemode == levelselect {
+					if gamemode == levelselect {
+						allSprites.RemoveAll()
 						NewStats()
 						CurrentLevel = NewLevelText(selector.GetVal())
 						activeTetromino = getRandTetromino(src, background)
@@ -103,10 +105,7 @@ mainloop:
 						gamemode = play
 					}
 				} else if ev.Key == tm.KeySpace {
-					if gamemode == title {
-						gamemode = levelselect
-						allSprites.Sprites = append(allSprites.Sprites, selector)
-					} else if gamemode == levelselect {
+					if gamemode == levelselect {
 						selector.NextCostume()
 						if selector.currentLevel < 10 {
 							selector.SetLevel(selector.currentLevel + 10)
@@ -131,6 +130,8 @@ mainloop:
 				} else if ev.Key == tm.KeyArrowUp {
 					if gamemode == levelselect {
 						selector.MoveUp()
+					} else if gamemode == play {
+						activeTetromino.Drop()
 					}
 				} else if ev.Key == tm.KeyArrowDown {
 					if gamemode == levelselect {

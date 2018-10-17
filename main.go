@@ -99,9 +99,6 @@ mainloop:
 						allSprites.Sprites = append(allSprites.Sprites, CurrentLevel)
 						allSprites.Sprites = append(allSprites.Sprites, activeTetromino)
 						allSprites.Sprites = append(allSprites.Sprites, nextTetromino)
-						allSprites.Remove(selector)
-						allSprites.Remove(t)
-						allSprites.Remove(tstr)
 						gamemode = play
 					}
 				} else if ev.Key == tm.KeySpace {

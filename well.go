@@ -42,7 +42,7 @@ func NewLinesText(linesNum int) *LinesText {
 	c := sprite.NewCostume(l, '!')
 
 	s := &LinesText{BaseSprite: sprite.BaseSprite{
-		Costumes: []sprite.Costume{c},
+		Costumes: []*sprite.Costume{&c},
 		Width:    c.Width,
 		Height:   c.Height,
 		Visible:  true,

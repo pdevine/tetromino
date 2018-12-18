@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"sort"
 
-	tm "github.com/gdamore/tcell/termbox"
+	tm "github.com/pdevine/go-asciisprite/termbox"
 	sprite "github.com/pdevine/go-asciisprite"
 )
 
@@ -147,7 +147,7 @@ func NewTetrominoBlock(x, y int) *TetrominoBlock {
 		Y:              y,
 		Height:         1,
 		Width:          2,
-		Costumes:       []sprite.Costume{c},
+		Costumes:       []*sprite.Costume{&c},
 		CurrentCostume: 0,
 		Visible:        true,
 		Dead:           false,

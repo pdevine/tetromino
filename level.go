@@ -3,7 +3,7 @@ package main
 import (
 	"strconv"
 
-	tm "github.com/gdamore/tcell/termbox"
+	tm "github.com/pdevine/go-asciisprite/termbox"
 	sprite "github.com/pdevine/go-asciisprite"
 )
 

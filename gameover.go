@@ -2,31 +2,31 @@ package main
 
 import sprite "github.com/pdevine/go-asciisprite"
 
-const basil = `                           .
-                           T
-                          ( )
-                          <==>
-                           FJ
-                           ==
-                          J||F
-                          F||J
-                         /\/\/\
-                         F++++J
-                        J{}{}{}F         .
-                     .  F{}{}{}J         T
-          .          T J{}{}{}{}F        ;;
-          T         /|\F \/ \/ \J  .   ,;;;;.
-         /:\      .'/|\\:========F T ./;;;;;;\
-       ./:/:/.   ///|||\\\""""""" /x\T\;;;;;;/
-      //:/:/:/\  \\\\|////..[]...xXXXx.|====|
-      \:/:/:/:T7 :.:.:.:.:||[]|/xXXXXXx\|||||
-      ::.:.:.:A. ` + "`" + `;:;:;:;'=====\XXXXXXX/=====.
-      ` + "`" + `;""::/xxx\.|,|,|,| ( )( )| | | |.=..=.|
-       :. :` + "`" + `\xxx/(_)(_)(_) _  _ | | | |'-''-'|
-       :T-'-.:"":|"""""""|/ \/ \|=====|======|
-       .A."""||_|| ,. .. || || |/\/\/\/ | | ||
-   :;:////\:::.'.| || || ||-||-|/\/\/\+|+| | |
-  ;:;;\////::::,='======='============/\/\=====.
+const basil = `qqqqqqqqqqqqqqqqqqqqqqqqqqq.
+qqqqqqqqqqqqqqqqqqqqqqqqqqqT
+qqqqqqqqqqqqqqqqqqqqqqqqqq( )
+qqqqqqqqqqqqqqqqqqqqqqqqqq<==>
+qqqqqqqqqqqqqqqqqqqqqqqqqqqFJ
+qqqqqqqqqqqqqqqqqqqqqqqqqqq==
+qqqqqqqqqqqqqqqqqqqqqqqqqqJ||F
+qqqqqqqqqqqqqqqqqqqqqqqqqqF||J
+qqqqqqqqqqqqqqqqqqqqqqqqq/\/\/\
+qqqqqqqqqqqqqqqqqqqqqqqqqF++++J
+qqqqqqqqqqqqqqqqqqqqqqqqJ{}{}{}Fqqqqqqqqq.
+qqqqqqqqqqqqqqqqqqqqq.qqF{}{}{}JqqqqqqqqqT
+qqqqqqqqqq.qqqqqqqqqqTqJ{}{}{}{}Fqqqqqqqq;;
+qqqqqqqqqqTqqqqqqqqq/|\F \/ \/ \Jxx.qqq,;;;;.
+qqqqqqqqq/:\qqqqqq.'/|\\:========FqTq./;;;;;;\
+qqqqqqq./:/:/.qqq///|||\\\""""""" /x\T\;;;;;;/
+qqqqqq//:/:/:/\qq\\\\|////..[]...xXXXx.|====|
+qqqqqq\:/:/:/:T7q:.:.:.:.:||[]|/xXXXXXx\|||||
+qqqqqq::.:.:.:A.q` + "`" + `;:;:;:;'=====\XXXXXXX/=====.
+qqqqqq` + "`" + `;""::/xxx\.|,|,|,| ( )( )| | | |.=..=.|
+qqqqqqq:. :` + "`" + `\xxx/(_)(_)(_) _  _ | | | |'-''-'|
+qqqqqqq:T-'-.:"":|"""""""|/ \/ \|=====|======|
+qqqqqqq.A."""||_|| ,. .. || || |/\/\/\/ | | ||
+qqq:;:////\:::.'.| || || ||-||-|/\/\/\+|+| | |
+qq;:;;\////::::,='======='============/\/\=====.
 :;:::;""":::::;:|__..,__|===========/||\|\====|
 :::::;|=:::;:;::|,;:::::         |========|   |
 ::l42::::::(}:::::;::::::________|========|___|__`

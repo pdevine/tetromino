@@ -153,6 +153,8 @@ mainloop:
 			if gamemode == play || gamemode == gameover || gamemode == paused {
 				background.Update()
 				background.Render()
+			} else if gamemode == cathedral {
+				scoreText.Render()
 			}
 			allSprites.Render()
 			elapsed := time.Since(start)

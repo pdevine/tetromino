@@ -299,13 +299,27 @@ func (s *Tetromino) RotateClockwise() {
 		return
 	}
 
-	s.CurrentCostume = s.CurrentCostume + 1
-	if s.CurrentCostume >= len(s.Costumes) {
-		s.CurrentCostume = 0
+	nextCostume := s.CurrentCostume + 1
+	if nextCostume >= len(s.Costumes) {
+		nextCostume = 0
 	}
+
+	c := s.Costumes[nextCostume]
+	m := c.BottomEdgeByColumn()
+
+	for k, v := range m {
+		// check if we're touching a block
+		for _, bs := range allBlocks {
+			if s.X+k == bs.X && s.Y+1+v == bs.Y {
+				return
+			}
+		}
+	}
+	s.CurrentCostume = nextCostume
 }
 
 func (s *Tetromino) RotateAnticlockwise() {
+	// XXX - not used. Consider excising
 	if s.X-s.Xoffset < 0 {
 		return
 	}

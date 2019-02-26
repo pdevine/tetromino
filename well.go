@@ -6,7 +6,10 @@ import (
 	sprite "github.com/pdevine/go-asciisprite"
 )
 
-const wellLine = `[][][][][][][][][][]`
+const wellLine    = `[][][][][][][][][][]`
+const wellOpening = `[][][]        [][][]`
+const wellGame    = `[][][]  GAME  [][][]`
+const wellOver    = `[][][]  OVER  [][][]`
 
 // are (time to wait) before next tetromino
 var areToHeight = map[int]int{
@@ -164,12 +167,24 @@ func NewWell() *Well {
 	return bg
 }
 
+func getWellLineText(l int) string {
+	switch {
+	case l == 8 || l == 11:
+		return wellOpening
+	case l == 9:
+		return wellGame
+	case l == 10:
+		return wellOver
+	}
+	return wellLine
+}
+
 func (s *Well) Update() {
 	if gamemode == gameover || gamemode == cathedral {
 		s.Timer++
 		if gamemode == gameover {
 			if s.Timer >= s.TimeOut && s.FilledLines <= 20 {
-				c := sprite.NewCostume(wellLine, '~')
+				c := sprite.NewCostume(getWellLineText(s.FilledLines), '~')
 				l := sprite.NewBaseSprite(s.X+2, s.Y+s.FilledLines, c)
 				allSprites.Sprites = append(allSprites.Sprites, l)
 				s.Timer = 10

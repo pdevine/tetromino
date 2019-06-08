@@ -127,42 +127,34 @@ func NewWell() *Well {
 	block_size := 2
 
 	for cnt := 0; cnt < 21; cnt++ {
-		b := sprite.Block{
-			X:    0,
-			Y:    cnt,
-			Char: '<',
-		}
+		b := sprite.Block{X:0, Y:cnt, Char:'<'}
 		bg.Background = append(bg.Background, b)
 
-		b = sprite.Block{
-			X:    1,
-			Y:    cnt,
-			Char: '!',
-		}
+		b = sprite.Block{X:1, Y:cnt, Char:'!'}
 		bg.Background = append(bg.Background, b)
 
-		b = sprite.Block{
-			X:    10*block_size + 2,
-			Y:    cnt,
-			Char: '!',
-		}
+		b = sprite.Block{X:10*block_size+2, Y:cnt, Char:'!'}
 		bg.Background = append(bg.Background, b)
 
-		b = sprite.Block{
-			X:    10*block_size + 3,
-			Y:    cnt,
-			Char: '>',
-		}
+		b = sprite.Block{X:10*block_size+3, Y:cnt, Char:'>'}
 		bg.Background = append(bg.Background, b)
+
+		for c:= 0; c < 20; c+=2 {
+			b = sprite.Block{X:c+3, Y:cnt, Char:'.'}
+			bg.Background = append(bg.Background, b)
+		}
 	}
 
 	for cnt := 0; cnt < 10*block_size; cnt++ {
-		b := sprite.Block{
-			X:    2 + cnt,
-			Y:    21,
-			Char: '*',
-		}
+		b := sprite.Block{X:2+cnt, Y:21, Char:'*'}
 		bg.Background = append(bg.Background, b)
+		if cnt%2 == 0 {
+			b = sprite.Block{X:2+cnt, Y:22, Char:'\\'}
+			bg.Background = append(bg.Background, b)
+		} else {
+			b = sprite.Block{X:2+cnt, Y:22, Char:'/'}
+			bg.Background = append(bg.Background, b)
+		}
 	}
 	return bg
 }

@@ -10,6 +10,7 @@ const wellLine    = `[][][][][][][][][][]`
 const wellOpening = `[][][]        [][][]`
 const wellGame    = `[][][]  GAME  [][][]`
 const wellOver    = `[][][]  OVER  [][][]`
+const helpMsg = `Press 'p' to pause or ESC to quit`
 
 // are (time to wait) before next tetromino
 var areToHeight = map[int]int{
@@ -33,6 +34,10 @@ var areToHeight = map[int]int{
 	3:  18,
 	2:  18,
 	1:  18,
+}
+
+type HelpText struct {
+	sprite.BaseSprite
 }
 
 type LinesText struct {
@@ -102,6 +107,17 @@ func NewScoreText() *ScoreText {
 	return s
 }
 
+func NewHelpText() *HelpText {
+        s := &HelpText{BaseSprite: sprite.BaseSprite{
+                X:       13,
+                Y:       36,
+                Visible: true,
+        }}
+        s.AddCostume(sprite.NewCostume(helpMsg, '!'))
+	return s
+}
+
+
 func (s *ScoreText) AddVal(v int) {
 	s.Val += v
 	s.Costumes[s.CurrentCostume].ChangeCostume(fmt.Sprintf("SCORE\n%07d", s.Val), '!')
@@ -156,6 +172,7 @@ func NewWell() *Well {
 			bg.Background = append(bg.Background, b)
 		}
 	}
+
 	return bg
 }
 
@@ -172,7 +189,7 @@ func getWellLineText(l int) string {
 }
 
 func (s *Well) Update() {
-	if gamemode == gameover || gamemode == cathedral {
+	if gamemode == gameover {
 		s.Timer++
 		if gamemode == gameover {
 			if s.Timer >= s.TimeOut && s.FilledLines <= 20 {
@@ -185,14 +202,13 @@ func (s *Well) Update() {
 				if scoreText.Val < 30000 {
 					return
 				}
-				for _, ts := range allSprites.Sprites {
-					allSprites.Remove(ts)
-				}
+				allSprites.RemoveAll()
 				gamemode = cathedral
 				c := NewCathedral(scoreText.Val)
 				l := NewLaunchPad()
 				r := NewRocket(scoreText.Val)
 
+				allSprites.Sprites = append(allSprites.Sprites, scoreText)
 				allSprites.Sprites = append(allSprites.Sprites, c)
 				allSprites.Sprites = append(allSprites.Sprites, l)
 				allSprites.Sprites = append(allSprites.Sprites, r)

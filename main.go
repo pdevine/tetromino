@@ -2,6 +2,7 @@ package main
 
 import (
 	"math/rand"
+	"flag"
 	"time"
 
 	sprite "github.com/pdevine/go-asciisprite"
@@ -36,7 +37,10 @@ var gamemode = title
 
 func main() {
 	// XXX - hack to make this work inside of a Docker container
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(1000 * time.Millisecond)
+
+	debug := flag.Bool("debug", false, "")
+	flag.Parse()
 
 	err := tm.Init()
 	if err != nil {
@@ -63,6 +67,7 @@ func main() {
 	linesText.Y = background.Y - 2
 	linesText.X = background.X + 8
 	scoreText = NewScoreText()
+	helpText := NewHelpText()
 
 	t := NewTitle()
 	tstr := NewTitleString()
@@ -94,6 +99,7 @@ mainloop:
 						activeTetromino.PlaceInWell()
 						nextTetromino = getRandTetromino(src, background)
 						nextTetromino.X = 45
+						allSprites.Sprites = append(allSprites.Sprites, helpText)
 						allSprites.Sprites = append(allSprites.Sprites, linesText)
 						allSprites.Sprites = append(allSprites.Sprites, scoreText)
 						allSprites.Sprites = append(allSprites.Sprites, CurrentLevel)
@@ -143,6 +149,8 @@ mainloop:
 					} else if gamemode == play {
 						gamemode = paused
 					}
+				} else if *debug && ev.Ch == '$' {
+					scoreText.AddVal(10000)
 				}
 			} else if ev.Type == tm.EventResize {
 				Width = ev.Width
@@ -153,8 +161,6 @@ mainloop:
 			if gamemode == play || gamemode == gameover || gamemode == paused {
 				background.Update()
 				background.Render()
-			} else if gamemode == cathedral {
-				scoreText.Render()
 			}
 			allSprites.Render()
 			elapsed := time.Since(start)

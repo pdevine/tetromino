@@ -1,7 +1,7 @@
-FROM golang:alpine3.8
+FROM golang:1.11-alpine
 WORKDIR /project
 RUN apk add --no-cache git
-RUN go get github.com/gdamore/tcell && go get github.com/pdevine/go-asciisprite
+RUN go get github.com/pdevine/go-asciisprite
 COPY *.go ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o tetromino *.go
 

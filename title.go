@@ -25,7 +25,7 @@ const logo = `[][][] [][] [][][] [][]     []   []    [] [] []   []   []
 const elek_costume1 = "e l e k t r o n i k a"
 const elek_costume2 = "Электроника"
 
-const copyright1 = "(c) 2018 Patrick Devine\n   patrick@immense.ly"
+const copyright1 = "(c) 2019 Patrick Devine\n   patrick@immense.ly"
 
 const instructions1 = "Press any key to continue"
 

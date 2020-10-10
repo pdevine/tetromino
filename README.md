@@ -7,7 +7,7 @@ TL;DR - A falling tetromino block game based upon NES Tetris in the style of the
 Try it out with the command:
 
 ```
-  $ docker run -it --rm pdevine/tetromino
+  $ docker run -it --rm ghcr.io/pdevine/tetromino
 ```
 
 It should look something like:

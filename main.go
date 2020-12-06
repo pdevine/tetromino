@@ -39,7 +39,10 @@ func main() {
 	// XXX - hack to make this work inside of a Docker container
 	time.Sleep(1000 * time.Millisecond)
 
+	var seed int64
+
 	debug := flag.Bool("debug", false, "")
+	flag.Int64Var(&seed, "seed", -1, "")
 	flag.Parse()
 
 	err := tm.Init()
@@ -57,8 +60,9 @@ func main() {
 		}
 	}()
 
-	var seed int64
-	seed = time.Now().Unix()
+	if seed == -1 {
+		seed = time.Now().Unix()
+	}
 
 	src = rand.NewSource(seed)
 	background = NewWell()

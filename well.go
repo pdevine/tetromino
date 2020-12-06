@@ -142,6 +142,7 @@ func NewWell() *Well {
 
 	block_size := 2
 
+	// Draw edges of the well and the center
 	for cnt := 0; cnt < 21; cnt++ {
 		b := sprite.Block{X:0, Y:cnt, Char:'<'}
 		bg.Background = append(bg.Background, b)
@@ -161,6 +162,7 @@ func NewWell() *Well {
 		}
 	}
 
+	// Draw base of the well
 	for cnt := 0; cnt < 10*block_size; cnt++ {
 		b := sprite.Block{X:2+cnt, Y:21, Char:'*'}
 		bg.Background = append(bg.Background, b)
